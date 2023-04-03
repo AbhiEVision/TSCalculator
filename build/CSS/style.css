@@ -1,0 +1,118 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+.inverse {
+    width: 60px !important;
+}
+
+.secoundStream {
+    display: none;
+}
+
+.primary {
+    background-color: #f3f3f3;
+    font-size: 30px;
+    padding-right: 7px;
+    margin-bottom: 30px;
+    border: none !important;
+}
+
+.secoundary {
+    border: none !important;
+    background-color: #f3f3f3;
+    font-size: 18px;
+    padding-right: 7px; 
+}
+
+.secoundary:focus, .primary:focus {
+    border: 0px !important;
+}
+
+.container {
+    margin: auto;
+    margin-top: 10%;
+    background-color: #f3f3f3;
+    width: 340px !important;
+}
+
+.row {
+    display: flex;
+    justify-content: start;
+    margin-left: 5px;
+    --bs-gutter-x : 0px !important;
+}
+
+.btn {
+    padding: 8px 10px 8px 10px !important;
+    border: 0 none !important;
+    width: 70px !important;
+    background-color: #f8f8f8 !important;
+    margin: 1px !important;
+    
+}
+
+.btn:hover {
+    background-color: lightskyblue !important;
+}
+
+
+.white {
+    background-color: white !important;
+    font-weight: bold !important;
+    font-size: 18px !important;
+}
+
+.operator {
+    font-size: 20px !important;
+}
+
+
+.equal {
+    background-color: lightskyblue !important;
+}
+
+.memory {
+    background-color: #f3f3f3 !important;
+    font-weight: bold !important;
+}
+
+.deg-fix {
+    background-color: #f3f3f3 !important;
+    font-weight: bold !important;
+}
+
+.trigonometry {
+    border: 0 none !important;
+    padding: 10px 10px 10px 5px !important;
+    background-color: #f3f3f3 !important;
+}
+
+.function {
+    border: 0 none !important;
+    margin-left: 10px !important;
+    padding: 10px !important;
+    background-color: #f3f3f3 !important;
+}
+
+.extra-btn {
+   width: auto !important;
+}
+
+.dropdown-btn {
+    width :50px !important;
+    padding: 0px !important;
+    /* padding: 8px 10px 8px 10px; */
+    border: 0 none !important;
+    /* width: 70px; */
+    background-color: #f8f8f8 !important;
+    margin: 1px !important;
+}
+
+.dropdown-btn:hover {
+    background-color: lightskyblue !important;
+}
+
