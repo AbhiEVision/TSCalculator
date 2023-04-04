@@ -1,4 +1,4 @@
-export class Calc {
+export class Calculator {
     // variables which are used for calculations or a refrences
     private publicAPI = {
         PS: document.getElementById("primary") as HTMLInputElement,
@@ -17,8 +17,11 @@ export class Calc {
         TrignoHyper: document.getElementsByClassName("hyper") as HTMLCollectionOf<HTMLElement>,
     }
 
+    constructor(){
+        
+    }
 
-    private OPERATOR:string[] = ["+", "-", "*", "/"];
+    private OPERATOR:string[] = ["+", "-", "*", "/", "%"];
     private secoundActivated : boolean = true;
     private secoundInTrignoActivated:boolean = false;
     private hyperInTrignoActivated:boolean = false;
@@ -26,15 +29,15 @@ export class Calc {
     private Memory:any[]= [];
 
     // getter and setter method for primary screen
-    GetPrimaryScreenValue() : string {
+    GetPrimaryScreenValue(): string{
         return this.publicAPI.PS.value;
     }
     
     SetPrimaryScreenValue(x : string) : void {
-        this.publicAPI.PS.value = x.toString();
+        this.publicAPI.PS.value = x;
     }
     
-    GetSecoundaryScreenValue() : string{
+    public GetSecoundaryScreenValue(){
         return this.publicAPI.SC.value;
     }
     
@@ -44,9 +47,11 @@ export class Calc {
 
     // functions for various buttons.
     AddNumber(number : string) {
-        if (this.publicAPI.PS?.value == "0") {
+        if (this.GetPrimaryScreenValue() == "0" || (/^([^0-9]*)$/).test(this.GetPrimaryScreenValue())  ) {
             this.SetPrimaryScreenValue(number);
-        } else {
+            
+        } else  {
+            
             this.SetPrimaryScreenValue(this.GetPrimaryScreenValue() + number);
         }
         this.ChangeTextOfClearButton(true);
@@ -70,6 +75,10 @@ export class Calc {
             const x:string = this.GetSecoundaryScreenValue();
             if (x[x.length - 1] == "=") {
                 this.SetSecoundaryScreenValue(this.publicAPI.PS.value + symbol)
+            } else if(x[x.length-1] == ")"){
+                this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "*" + this.GetPrimaryScreenValue() + symbol)
+            }else if(this.GetPrimaryScreenValue() == "0"){
+                this.SetSecoundaryScreenValue(x.substring(0,x.length-1) + symbol);
             } else {
                 this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.publicAPI.PS.value + symbol);
             }
@@ -81,11 +90,17 @@ export class Calc {
     EqualOperator() {
         let x:string = this.GetSecoundaryScreenValue();
         if (x != "") {
-            if (x[x.length - 1] == ")") {
+            const index = x.indexOf("=");           
+            if (x[x.length - 1] == ")" && index == -1) {
                 this.EvailFunction(x);
             } else if (x[x.length - 1] == "=") {
-                // if multiple equal clicked do nothig  
-            } else {
+                this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "=");
+
+            }else if(index != -1) {
+                x = x.slice(index+1,x.length);
+                console.log("inside")
+                this.EvailFunction(x);
+            }else {
                 x += this.GetPrimaryScreenValue();
                 this.EvailFunction(x);
             }
@@ -97,7 +112,7 @@ export class Calc {
         this.ClearBracketCounter();
     }
 
-    EvailFunction(str : string) {
+    EvailFunction(str : string) {        
         try {
             const result = eval(str);
             this.SetSecoundaryScreenValue(str + "=");
@@ -132,18 +147,31 @@ export class Calc {
 
     // Bracket functions 
     OpenBracketFunction() {
-        const x:string = this.GetSecoundaryScreenValue();
-        if (x == "" && x[x.length - 1] == "=") {
-            this.SetSecoundaryScreenValue("(");
+        const x:string = this.GetSecoundaryScreenValue(), y =this.GetPrimaryScreenValue();
+        if(x != "" && y != "0" && x[x.length-1] != "="){
+            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + "*(");
+            this.SetPrimaryScreenValue("0");
+        } else if( x == "" && y!= "0"){
+            this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "*(");
+            this.SetPrimaryScreenValue("0");
+        } else if( x != "" && y!= "0" && x[x.length-1] == "=") {
+            this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "*(");
+            this.SetPrimaryScreenValue("0");
         } else {
-            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "(");
+            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "(")
         }
         this.IncrementBracketCounter();
     }
 
     CloseBracketFunction() {
         if (this.GetBracketCount() > 0) {
-            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + ")");
+            const x = this.GetSecoundaryScreenValue();
+            if(x[x.length-1] == ")"){
+                this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "*" + this.GetPrimaryScreenValue() + ")");   
+            }else {
+                this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + ")");   
+            }
+            this.SetPrimaryScreenValue("0"); 
             this.DecrementBracketCounter();
         }
     }
@@ -594,5 +622,5 @@ export class Calc {
         let minutes = ((x - Math.floor(x)) * 60.0);
         let seconds = (minutes - Math.floor(minutes)) * 60.0;
         this.SetPrimaryScreenValue((degree + "." + Math.floor(minutes) + seconds.toFixed(0)).toString());
-    }
+    }    
 }   
