@@ -9,7 +9,7 @@
 
         <link rel="icon" href="favicon/calculator.jpeg">
         <link rel="stylesheet" href="CSS/style.css">
-        <script src="JavaScript/main.js" defer type="module"></script>
+        <script src="JavaScript/main.js" defer></script>
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
             integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
@@ -44,9 +44,9 @@
                 </div>
             </div>
             <div class="row">
-                <button class="col-2 btn deg-fix" id="DegBtn"
+                <button class="col-2 btn deg-fix shadow-none" id="DegBtn"
                     >DEG</button>
-                <button class="col-2 btn deg-fix" id="exp-extra" >F-E</button>
+                <button class="col-2 btn deg-fix shadow-none" id="exp-extra" >F-E</button>
             </div>
             <div class="row">
                 <button type="button" class="btn memory col shadow-none" id="memoryClear"
@@ -59,7 +59,7 @@
                     >M-</button>
                 <button type="button" class="btn memory col shadow-none" id="memoryStore"
                     >MS</button>
-                <button type="button" class="btn memory col" id="memoryShow"
+                <button type="button" class="btn memory col shadow-none" id="memoryShow"
                     data-bs-toggle="offcanvas" data-bs-target="#memory-here"
                     aria-controls="memory-here" >
                     M<i class="fa fa-angle-down" aria-hidden="true"></i>
@@ -78,8 +78,8 @@
                     <button type="button" class="btn dropdown-toggle extra-btn shadow-none"
                         id="trigno-extra" data-bs-toggle="dropdown"
                         aria-expanded="false" data-bs-auto-close="outside">
-                        <img src="Images/trigno.svg" width="10px" height="10px"
-                            class="trigo-img">
+                        <!-- <img src="Images/trigno.svg" width="10px" height="10px"
+                            class="trigo-img"> -->
                         trigonometry
                     </button>
 
@@ -166,107 +166,108 @@
                 <!-- normal buttons-->
                 <div class="row mr-0">
                     <button type="button" id="second-nd" class="col btn shadow-none"
-                        onclick="SecoundaryButoonFunction()">2<sup>nd</sup></button>
+                        >2<sup>nd</sup></button>
                     <button type="button" class="col btn shadow-none" id="PIValue"
-                        onclick="WritePIValue()">&pi;</button>
+                        >&pi;</button>
                     <button type="button" class="col btn shadow-none" id="EValue"
-                        onclick="WriteEValue()">e</button>
+                        >e</button>
                     <button type="button" class="col btn shadow-none" id="Clear"
-                        onclick="ClearScreen()">C</button>
+                        >C</button>
                     <button type="button" class="col btn shadow-none" id="removeBack"
-                        onclick="RemoveFromBack()"><i class="fa-solid
+                       ><i class="fa-solid
                             fa-delete-left"></i></button>
                 </div>
 
                 <div class="row">
                     <button type="button" class="col btn firstButtons shadow-none" id="powOf2"
-                        onclick="PowOfX(2)">x<sup>2</sup></button>
+                        >x<sup>2</sup></button>
                     <button type="button" class="col btn secoundStream shadow-none" id="powOf3"
-                        onclick="PowOfX(3)">x<sup>3</sup></button>
-                    <button type="button" class="col btn shadow-none" id="OneUponX" onclick="OneUponX()">1/x</button>
-                    <button type="button" class="col btn shadow-none" id="Mods" onclick="DoMod()">|x|</button>
+                        >x<sup>3</sup></button>
+                    <button type="button" class="col btn shadow-none" id="OneUponX" >1/x</button>
+                    <button type="button" class="col btn shadow-none" id="Mods" >|x|</button>
                     <button type="button" class="col btn shadow-none" id="Exponential"
-                        onclick="Exponational()">exp</button>
+                        >exp</button>
                     <button type="button" class="col btn shadow-none" id="modular"
-                        onclick="BasicFunctions('%')">mod</button>
+                        >mod</button>
                 </div>
 
                 <div class="row">
                     <button type="button" class="col btn firstButtons shadow-none" id="powOfOneBy2"
-                        onclick="PowOfX(1/2)">2&Sqrt;x</button>
+                       >2&Sqrt;x</button>
                     <button type="button" class="col btn secoundStream shadow-none" id="powOfOneBy3"
-                        onclick="PowOfX(1/3)">3&Sqrt;x</button>
+                        >3&Sqrt;x</button>
                     <button type="button" class="col btn shadow-none" id="Open-Bracket"
-                        onclick="OpenBracketFunction()">( <span
+                        >( <span
                             id="Open-Bracket-Count"></span></button>
                     <button type="button" class="col btn shadow-none" id="Close-Bracket"
-                        onclick="CloseBracketFunction()">)</button>
+                       >)</button>
                     <button type="button" class="col btn shadow-none" id="Factorial"
-                        onclick="DoFactorial()">n!</button>
+                        >n!</button>
                     <button type="button" class="col btn operator shadow-none" id="Devide"
-                        onclick="BasicFunctions('/')">&divide;</button>
+                        >&divide;</button>
                 </div>
 
                 <div class="row">
                     <button type="button" class="col btn firstButtons shadow-none" id="SqureOfy"
-                        onclick="BasicFunctions('**')">x<sup>y</sup></button>
+                        >x<sup>y</sup></button>
                     <button type="button" class="col btn secoundStream shadow-none"><sup>y</sup>&#x221A;x</button>
                     <button type="button" class="col btn white shadow-none" id="seven"
-                        onclick="AddNumber('7')">7</button>
+                        >7</button>
                     <button type="button" class="col btn white shadow-none" id="eight"
-                        onclick="AddNumber('8')">8</button>
+                        >8</button>
                     <button type="button" class="col btn white shadow-none" id="nine"
-                        onclick="AddNumber('9')">9</button>
+                        >9</button>
                     <button type="button" class="col btn operator shadow-none" id="Multiplication"
-                        onclick="BasicFunctions('*')">&times;</button>
+                        >&times;</button>
                 </div>
 
                 <div class="row">
                     <button type="button" class="col btn firstButtons shadow-none" id="resToTen"
-                        onclick="ResToX(10)">10<sup>x</sup></button>
+                        >10<sup>x</sup></button>
                     <button type="button" class="col btn secoundStream shadow-none" id="resToTwo"
-                        onclick="ResToX(2)">2<sup>x</sup></button>
+                        >2<sup>x</sup></button>
                     <button type="button" class="col btn white shadow-none" id="four"
-                        onclick="AddNumber('4')">4</button>
+                        >4</button>
                     <button type="button" class="col btn white shadow-none" id="five"
-                        onclick="AddNumber('5')">5</button>
+                        >5</button>
                     <button type="button" class="col btn white shadow-none" id="six"
-                        onclick="AddNumber('6')">6</button>
+                        >6</button>
                     <button type="button" class="col btn operator shadow-none" id="substraction"
-                        onclick="BasicFunctions('-')" style="font-size: 15px
+                         style="font-size: 15px
                         !important;">&#9472;</button>
                 </div>
 
                 <div class="row">
                     <button type="button" class="col btn firstButtons shadow-none" id="logBaseTen"
-                        onclick="DoLog('Base10')">log</button>
+                        >log</button>
                     <button type="button" class="col btn secoundStream shadow-none">log<sub>y</sub>x</button>
                     <button type="button" class="col btn white shadow-none" id="one"
-                        onclick="AddNumber('1')">1</button>
+                        >1</button>
                     <button type="button" class="col btn white shadow-none" id="two"
-                        onclick="AddNumber('2')">2</button>
+                        >2</button>
                     <button type="button" class="col btn white shadow-none" id="three"
-                        onclick="AddNumber('3')">3</button>
+                        >3</button>
                     <button type="button" class="col btn operator shadow-none" id="addition"
-                        onclick="BasicFunctions('+')">+</button>
+                        >+</button>
                 </div>
                 
                 <div class="row">
                     <button type="button" class="col btn firstButtons shadow-none" id="logNatural"
-                        onclick="DoLog('Natural')">ln</button>
+                        >ln</button>
                     <button type="button" class="col btn secoundStream shadow-none" id="resToE"
-                        onclick="ResToX(Math.E)">e<sup>x</sup></button>
+                        >e<sup>x</sup></button>
                     <button type="button" class="col btn white shadow-none" id="negate"
-                        onclick="NegateFunction()">+/-</button>
+                        >+/-</button>
                     <button type="button" class="col btn white shadow-none" id="zero"
-                        onclick="AddNumber('0')">0</button>
+                        >0</button>
                     <button type="button" class="col btn white shadow-none" id="putPoint"
-                        onclick="PutPoint()">.</button>
+                        >.</button>
                     <button type="button" class="col btn operator shadow-none" id="Equal"
                         style="background-color: lightskyblue !important;"
-                        onclick="EqualOperator()">=</button>
+                        >=</button>
                 </div>
             </div>
         </div>
+        
     </body>
 </html>
