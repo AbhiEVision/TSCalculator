@@ -19,7 +19,7 @@ class Calc {
             TrignoInverse: document.getElementsByClassName("inverse"),
             TrignoHyper: document.getElementsByClassName("hyper"),
         };
-        this.OPERATOR = ["+", "-", "*", "/"];
+        this.OPERATOR = ["+", "-", "*", "/", "%"];
         this.secoundActivated = true;
         this.secoundInTrignoActivated = false;
         this.hyperInTrignoActivated = false;
@@ -31,7 +31,7 @@ class Calc {
         return this.publicAPI.PS.value;
     }
     SetPrimaryScreenValue(x) {
-        this.publicAPI.PS.value = x.toString();
+        this.publicAPI.PS.value = x;
     }
     GetSecoundaryScreenValue() {
         return this.publicAPI.SC.value;
@@ -41,8 +41,7 @@ class Calc {
     }
     // functions for various buttons.
     AddNumber(number) {
-        var _a;
-        if (((_a = this.publicAPI.PS) === null || _a === void 0 ? void 0 : _a.value) == "0") {
+        if (this.GetPrimaryScreenValue() == "0" || (/^([^0-9]*)$/).test(this.GetPrimaryScreenValue())) {
             this.SetPrimaryScreenValue(number);
         }
         else {
@@ -69,6 +68,12 @@ class Calc {
             if (x[x.length - 1] == "=") {
                 this.SetSecoundaryScreenValue(this.publicAPI.PS.value + symbol);
             }
+            else if (x[x.length - 1] == ")") {
+                this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "*" + this.GetPrimaryScreenValue() + symbol);
+            }
+            else if (this.GetPrimaryScreenValue() == "0") {
+                this.SetSecoundaryScreenValue(x.substring(0, x.length - 1) + symbol);
+            }
             else {
                 this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.publicAPI.PS.value + symbol);
             }
@@ -79,11 +84,17 @@ class Calc {
     EqualOperator() {
         let x = this.GetSecoundaryScreenValue();
         if (x != "") {
-            if (x[x.length - 1] == ")") {
+            const index = x.indexOf("=");
+            if (x[x.length - 1] == ")" && index == -1) {
                 this.EvailFunction(x);
             }
             else if (x[x.length - 1] == "=") {
-                // if multiple equal clicked do nothig  
+                this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "=");
+            }
+            else if (index != -1) {
+                x = x.slice(index + 1, x.length);
+                console.log("inside");
+                this.EvailFunction(x);
             }
             else {
                 x += this.GetPrimaryScreenValue();
@@ -131,9 +142,18 @@ class Calc {
     }
     // Bracket functions 
     OpenBracketFunction() {
-        const x = this.GetSecoundaryScreenValue();
-        if (x == "" && x[x.length - 1] == "=") {
-            this.SetSecoundaryScreenValue("(");
+        const x = this.GetSecoundaryScreenValue(), y = this.GetPrimaryScreenValue();
+        if (x != "" && y != "0" && x[x.length - 1] != "=") {
+            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + "*(");
+            this.SetPrimaryScreenValue("0");
+        }
+        else if (x == "" && y != "0") {
+            this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "*(");
+            this.SetPrimaryScreenValue("0");
+        }
+        else if (x != "" && y != "0" && x[x.length - 1] == "=") {
+            this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "*(");
+            this.SetPrimaryScreenValue("0");
         }
         else {
             this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "(");
@@ -142,7 +162,16 @@ class Calc {
     }
     CloseBracketFunction() {
         if (this.GetBracketCount() > 0) {
-            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + ")");
+            const x = this.GetSecoundaryScreenValue();
+            if (x[x.length - 1] == ")") {
+                this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "*" + this.GetPrimaryScreenValue() + ")");
+                this.SetPrimaryScreenValue("0");
+            }
+            else {
+                this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + ")");
+                this.SetPrimaryScreenValue("0");
+            }
+            // this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + ")");
             this.DecrementBracketCounter();
         }
     }
@@ -577,18 +606,18 @@ const calculator = new Calc();
 calculator.SecoundaryButoonFunction();
 calculator.Trigno2nd();
 //first row event listner
-(_a = document.getElementById("DegBtn")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", calculator.DegToRad);
-(_b = document.getElementById("exp-extra")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", calculator.Exponational);
+(_a = document.getElementById("DegBtn")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => calculator.DegToRad());
+(_b = document.getElementById("exp-extra")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => calculator.Exponational());
 //memory function
-(_c = document.getElementById("memoryClear")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", calculator.MemoryClear);
-(_d = document.getElementById("memoryRecall")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", calculator.MemoryRead);
-(_e = document.getElementById("memoryPlus")) === null || _e === void 0 ? void 0 : _e.addEventListener("click", calculator.MemoryAdd);
-(_f = document.getElementById("memoryMinus")) === null || _f === void 0 ? void 0 : _f.addEventListener("click", calculator.MemorySub);
-(_g = document.getElementById("memoryStore")) === null || _g === void 0 ? void 0 : _g.addEventListener("click", calculator.MemoryStore);
-(_h = document.getElementById("memoryShow")) === null || _h === void 0 ? void 0 : _h.addEventListener("click", calculator.ShowMemory);
+(_c = document.getElementById("memoryClear")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => calculator.MemoryClear());
+(_d = document.getElementById("memoryRecall")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => calculator.MemoryRead());
+(_e = document.getElementById("memoryPlus")) === null || _e === void 0 ? void 0 : _e.addEventListener("click", () => calculator.MemoryAdd());
+(_f = document.getElementById("memoryMinus")) === null || _f === void 0 ? void 0 : _f.addEventListener("click", () => calculator.MemorySub());
+(_g = document.getElementById("memoryStore")) === null || _g === void 0 ? void 0 : _g.addEventListener("click", () => calculator.MemoryStore());
+(_h = document.getElementById("memoryShow")) === null || _h === void 0 ? void 0 : _h.addEventListener("click", () => calculator.ShowMemory());
 // extra tigno and function button in trigno
-(_j = document.getElementById("trignoSecound")) === null || _j === void 0 ? void 0 : _j.addEventListener("click", calculator.Trigno2nd);
-(_k = document.getElementById("trignohyperextra")) === null || _k === void 0 ? void 0 : _k.addEventListener("click", calculator.TrignoHyper);
+(_j = document.getElementById("trignoSecound")) === null || _j === void 0 ? void 0 : _j.addEventListener("click", () => calculator.Trigno2nd());
+(_k = document.getElementById("trignohyperextra")) === null || _k === void 0 ? void 0 : _k.addEventListener("click", () => calculator.TrignoHyper());
 (_l = document.getElementById("sin")) === null || _l === void 0 ? void 0 : _l.addEventListener("click", () => { calculator.DoTrignoCalculation("sin"); });
 (_m = document.getElementById("cos")) === null || _m === void 0 ? void 0 : _m.addEventListener("click", () => { calculator.DoTrignoCalculation("cos"); });
 (_o = document.getElementById("tan")) === null || _o === void 0 ? void 0 : _o.addEventListener("click", () => { calculator.DoTrignoCalculation("tan"); });
@@ -613,24 +642,24 @@ calculator.Trigno2nd();
 (_7 = document.getElementById("random")) === null || _7 === void 0 ? void 0 : _7.addEventListener("click", () => { calculator.PutRandom(); });
 (_8 = document.getElementById("dms")) === null || _8 === void 0 ? void 0 : _8.addEventListener("click", () => { calculator.DMS(); });
 // first line
-(_9 = document.getElementById("second-nd")) === null || _9 === void 0 ? void 0 : _9.addEventListener("click", calculator.SecoundaryButoonFunction);
-(_10 = document.getElementById("PIValue")) === null || _10 === void 0 ? void 0 : _10.addEventListener("click", calculator.WritePIValue);
-(_11 = document.getElementById("EValue")) === null || _11 === void 0 ? void 0 : _11.addEventListener("click", calculator.WriteEValue);
-(_12 = document.getElementById("Clear")) === null || _12 === void 0 ? void 0 : _12.addEventListener("click", calculator.ClearScreen);
-(_13 = document.getElementById("removeBack")) === null || _13 === void 0 ? void 0 : _13.addEventListener("click", calculator.RemoveFromBack);
+(_9 = document.getElementById("second-nd")) === null || _9 === void 0 ? void 0 : _9.addEventListener("click", () => calculator.SecoundaryButoonFunction());
+(_10 = document.getElementById("PIValue")) === null || _10 === void 0 ? void 0 : _10.addEventListener("click", () => calculator.WritePIValue());
+(_11 = document.getElementById("EValue")) === null || _11 === void 0 ? void 0 : _11.addEventListener("click", () => calculator.WriteEValue());
+(_12 = document.getElementById("Clear")) === null || _12 === void 0 ? void 0 : _12.addEventListener("click", () => calculator.ClearScreen());
+(_13 = document.getElementById("removeBack")) === null || _13 === void 0 ? void 0 : _13.addEventListener("click", () => calculator.RemoveFromBack());
 // secound line
 (_14 = document.getElementById("powOf2")) === null || _14 === void 0 ? void 0 : _14.addEventListener("click", () => calculator.PowOfX(2));
 (_15 = document.getElementById("powOf3")) === null || _15 === void 0 ? void 0 : _15.addEventListener("click", () => calculator.PowOfX(3));
-(_16 = document.getElementById("OneUponX")) === null || _16 === void 0 ? void 0 : _16.addEventListener("click", calculator.OneUponX);
-(_17 = document.getElementById("Mods")) === null || _17 === void 0 ? void 0 : _17.addEventListener("click", calculator.DoMod);
-(_18 = document.getElementById("Exponential")) === null || _18 === void 0 ? void 0 : _18.addEventListener("click", calculator.Exponational);
+(_16 = document.getElementById("OneUponX")) === null || _16 === void 0 ? void 0 : _16.addEventListener("click", () => calculator.OneUponX());
+(_17 = document.getElementById("Mods")) === null || _17 === void 0 ? void 0 : _17.addEventListener("click", () => calculator.DoMod());
+(_18 = document.getElementById("Exponential")) === null || _18 === void 0 ? void 0 : _18.addEventListener("click", () => calculator.Exponational());
 (_19 = document.getElementById("modular")) === null || _19 === void 0 ? void 0 : _19.addEventListener("click", () => calculator.BasicFunctions("%"));
 //third line
 (_20 = document.getElementById("powOfOneBy2")) === null || _20 === void 0 ? void 0 : _20.addEventListener("click", () => calculator.PowOfX(1 / 2));
 (_21 = document.getElementById("powOfOneBy3")) === null || _21 === void 0 ? void 0 : _21.addEventListener("click", () => calculator.PowOfX(1 / 3));
-(_22 = document.getElementById("Open-Bracket")) === null || _22 === void 0 ? void 0 : _22.addEventListener("click", calculator.OpenBracketFunction);
-(_23 = document.getElementById("Close-Bracket")) === null || _23 === void 0 ? void 0 : _23.addEventListener("click", calculator.CloseBracketFunction);
-(_24 = document.getElementById("Factorial")) === null || _24 === void 0 ? void 0 : _24.addEventListener("click", calculator.DoFactorial);
+(_22 = document.getElementById("Open-Bracket")) === null || _22 === void 0 ? void 0 : _22.addEventListener("click", () => calculator.OpenBracketFunction());
+(_23 = document.getElementById("Close-Bracket")) === null || _23 === void 0 ? void 0 : _23.addEventListener("click", () => calculator.CloseBracketFunction());
+(_24 = document.getElementById("Factorial")) === null || _24 === void 0 ? void 0 : _24.addEventListener("click", () => calculator.DoFactorial());
 (_25 = document.getElementById("Devide")) === null || _25 === void 0 ? void 0 : _25.addEventListener("click", () => calculator.BasicFunctions("/"));
 // forth line
 (_26 = document.getElementById("SqureOfy")) === null || _26 === void 0 ? void 0 : _26.addEventListener("click", () => calculator.BasicFunctions("**"));
@@ -654,7 +683,7 @@ calculator.Trigno2nd();
 // seven line
 (_42 = document.getElementById("logNatural")) === null || _42 === void 0 ? void 0 : _42.addEventListener("click", () => calculator.DoLog('Natural'));
 (_43 = document.getElementById("resToE")) === null || _43 === void 0 ? void 0 : _43.addEventListener("click", () => calculator.ResToX(Math.E));
-(_44 = document.getElementById("negate")) === null || _44 === void 0 ? void 0 : _44.addEventListener("click", calculator.NegateFunction);
+(_44 = document.getElementById("negate")) === null || _44 === void 0 ? void 0 : _44.addEventListener("click", () => calculator.NegateFunction());
 (_45 = document.getElementById("zero")) === null || _45 === void 0 ? void 0 : _45.addEventListener("click", () => calculator.AddNumber('0'));
-(_46 = document.getElementById("putPoint")) === null || _46 === void 0 ? void 0 : _46.addEventListener("click", calculator.PutPoint);
-(_47 = document.getElementById("Equal")) === null || _47 === void 0 ? void 0 : _47.addEventListener("click", calculator.EqualOperator);
+(_46 = document.getElementById("putPoint")) === null || _46 === void 0 ? void 0 : _46.addEventListener("click", () => calculator.PutPoint());
+(_47 = document.getElementById("Equal")) === null || _47 === void 0 ? void 0 : _47.addEventListener("click", () => calculator.EqualOperator());

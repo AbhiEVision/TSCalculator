@@ -18,8 +18,11 @@ class Calc {
         TrignoHyper: document.getElementsByClassName("hyper") as HTMLCollectionOf<HTMLElement>,
     }
 
+    constructor(){
+        
+    }
 
-    private OPERATOR:string[] = ["+", "-", "*", "/"];
+    private OPERATOR:string[] = ["+", "-", "*", "/", "%"];
     private secoundActivated : boolean = true;
     private secoundInTrignoActivated:boolean = false;
     private hyperInTrignoActivated:boolean = false;
@@ -27,15 +30,15 @@ class Calc {
     private Memory:any[]= [];
 
     // getter and setter method for primary screen
-    GetPrimaryScreenValue() : string {
+    GetPrimaryScreenValue(): string{
         return this.publicAPI.PS.value;
     }
     
     SetPrimaryScreenValue(x : string) : void {
-        this.publicAPI.PS.value = x.toString();
+        this.publicAPI.PS.value = x;
     }
     
-    GetSecoundaryScreenValue() : string{
+    public GetSecoundaryScreenValue(){
         return this.publicAPI.SC.value;
     }
     
@@ -45,9 +48,11 @@ class Calc {
 
     // functions for various buttons.
     AddNumber(number : string) {
-        if (this.publicAPI.PS?.value == "0") {
+        if (this.GetPrimaryScreenValue() == "0" || (/^([^0-9]*)$/).test(this.GetPrimaryScreenValue())  ) {
             this.SetPrimaryScreenValue(number);
-        } else {
+            
+        } else  {
+            
             this.SetPrimaryScreenValue(this.GetPrimaryScreenValue() + number);
         }
         this.ChangeTextOfClearButton(true);
@@ -71,6 +76,10 @@ class Calc {
             const x:string = this.GetSecoundaryScreenValue();
             if (x[x.length - 1] == "=") {
                 this.SetSecoundaryScreenValue(this.publicAPI.PS.value + symbol)
+            } else if(x[x.length-1] == ")"){
+                this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "*" + this.GetPrimaryScreenValue() + symbol)
+            }else if(this.GetPrimaryScreenValue() == "0"){
+                this.SetSecoundaryScreenValue(x.substring(0,x.length-1) + symbol);
             } else {
                 this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.publicAPI.PS.value + symbol);
             }
@@ -82,11 +91,17 @@ class Calc {
     EqualOperator() {
         let x:string = this.GetSecoundaryScreenValue();
         if (x != "") {
-            if (x[x.length - 1] == ")") {
+            const index = x.indexOf("=");           
+            if (x[x.length - 1] == ")" && index == -1) {
                 this.EvailFunction(x);
             } else if (x[x.length - 1] == "=") {
-                // if multiple equal clicked do nothig  
-            } else {
+                this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "=");
+
+            }else if(index != -1) {
+                x = x.slice(index+1,x.length);
+                console.log("inside")
+                this.EvailFunction(x);
+            }else {
                 x += this.GetPrimaryScreenValue();
                 this.EvailFunction(x);
             }
@@ -98,7 +113,7 @@ class Calc {
         this.ClearBracketCounter();
     }
 
-    EvailFunction(str : string) {
+    EvailFunction(str : string) {        
         try {
             const result = eval(str);
             this.SetSecoundaryScreenValue(str + "=");
@@ -133,18 +148,33 @@ class Calc {
 
     // Bracket functions 
     OpenBracketFunction() {
-        const x:string = this.GetSecoundaryScreenValue();
-        if (x == "" && x[x.length - 1] == "=") {
-            this.SetSecoundaryScreenValue("(");
+        const x:string = this.GetSecoundaryScreenValue(), y =this.GetPrimaryScreenValue();
+        if(x != "" && y != "0" && x[x.length-1] != "="){
+            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + "*(");
+            this.SetPrimaryScreenValue("0");
+        } else if( x == "" && y!= "0"){
+            this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "*(");
+            this.SetPrimaryScreenValue("0");
+        } else if( x != "" && y!= "0" && x[x.length-1] == "=") {
+            this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "*(");
+            this.SetPrimaryScreenValue("0");
         } else {
-            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "(");
+            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "(")
         }
         this.IncrementBracketCounter();
     }
 
     CloseBracketFunction() {
         if (this.GetBracketCount() > 0) {
-            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + ")");
+            const x = this.GetSecoundaryScreenValue();
+            if(x[x.length-1] == ")"){
+                this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "*" + this.GetPrimaryScreenValue() + ")");   
+                this.SetPrimaryScreenValue("0"); 
+            }else {
+                this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + ")");   
+                this.SetPrimaryScreenValue("0");
+            }
+            // this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + ")");
             this.DecrementBracketCounter();
         }
     }
@@ -595,7 +625,7 @@ class Calc {
         let minutes = ((x - Math.floor(x)) * 60.0);
         let seconds = (minutes - Math.floor(minutes)) * 60.0;
         this.SetPrimaryScreenValue((degree + "." + Math.floor(minutes) + seconds.toFixed(0)).toString());
-    }
+    }    
 }   
 
 
@@ -608,21 +638,21 @@ calculator.Trigno2nd();
 
 
 //first row event listner
-document.getElementById("DegBtn")?.addEventListener("click",calculator.DegToRad);
-document.getElementById("exp-extra")?.addEventListener("click",calculator.Exponational);
+document.getElementById("DegBtn")?.addEventListener("click",()=>calculator.DegToRad());
+document.getElementById("exp-extra")?.addEventListener("click",()=>calculator.Exponational());
 
 //memory function
-document.getElementById("memoryClear")?.addEventListener("click",calculator.MemoryClear);
-document.getElementById("memoryRecall")?.addEventListener("click",calculator.MemoryRead);
-document.getElementById("memoryPlus")?.addEventListener("click",calculator.MemoryAdd);
-document.getElementById("memoryMinus")?.addEventListener("click",calculator.MemorySub);
-document.getElementById("memoryStore")?.addEventListener("click",calculator.MemoryStore);
-document.getElementById("memoryShow")?.addEventListener("click",calculator.ShowMemory);
+document.getElementById("memoryClear")?.addEventListener("click",()=>calculator.MemoryClear());
+document.getElementById("memoryRecall")?.addEventListener("click",()=>calculator.MemoryRead());
+document.getElementById("memoryPlus")?.addEventListener("click",()=>calculator.MemoryAdd());
+document.getElementById("memoryMinus")?.addEventListener("click",()=>calculator.MemorySub());
+document.getElementById("memoryStore")?.addEventListener("click",()=>calculator.MemoryStore());
+document.getElementById("memoryShow")?.addEventListener("click",()=>calculator.ShowMemory());
 
 // extra tigno and function button in trigno
 
-document.getElementById("trignoSecound")?.addEventListener("click",calculator.Trigno2nd);
-document.getElementById("trignohyperextra")?.addEventListener("click",calculator.TrignoHyper);
+document.getElementById("trignoSecound")?.addEventListener("click",()=>calculator.Trigno2nd());
+document.getElementById("trignohyperextra")?.addEventListener("click",()=>calculator.TrignoHyper());
 
 document.getElementById("sin")?.addEventListener("click",()=>{calculator.DoTrignoCalculation("sin");});
 document.getElementById("cos")?.addEventListener("click",()=>{calculator.DoTrignoCalculation("cos");})
@@ -651,26 +681,26 @@ document.getElementById("dms")?.addEventListener("click",()=>{calculator.DMS()})
 
 
 // first line
-document.getElementById("second-nd")?.addEventListener("click",calculator.SecoundaryButoonFunction);
-document.getElementById("PIValue")?.addEventListener("click",calculator.WritePIValue);
-document.getElementById("EValue")?.addEventListener("click",calculator.WriteEValue);
-document.getElementById("Clear")?.addEventListener("click",calculator.ClearScreen);
-document.getElementById("removeBack")?.addEventListener("click",calculator.RemoveFromBack);
+document.getElementById("second-nd")?.addEventListener("click",()=>calculator.SecoundaryButoonFunction());
+document.getElementById("PIValue")?.addEventListener("click",()=>calculator.WritePIValue());
+document.getElementById("EValue")?.addEventListener("click",()=>calculator.WriteEValue());
+document.getElementById("Clear")?.addEventListener("click",()=>calculator.ClearScreen());
+document.getElementById("removeBack")?.addEventListener("click",()=>calculator.RemoveFromBack());
 
 // secound line
 document.getElementById("powOf2")?.addEventListener("click",()=>calculator.PowOfX(2));
 document.getElementById("powOf3")?.addEventListener("click",()=>calculator.PowOfX(3));
-document.getElementById("OneUponX")?.addEventListener("click",calculator.OneUponX);
-document.getElementById("Mods")?.addEventListener("click",calculator.DoMod);
-document.getElementById("Exponential")?.addEventListener("click",calculator.Exponational);
+document.getElementById("OneUponX")?.addEventListener("click",()=>calculator.OneUponX());
+document.getElementById("Mods")?.addEventListener("click",()=>calculator.DoMod());
+document.getElementById("Exponential")?.addEventListener("click",()=>calculator.Exponational());
 document.getElementById("modular")?.addEventListener("click",()=>calculator.BasicFunctions("%"));
 
 //third line
 document.getElementById("powOfOneBy2")?.addEventListener("click",()=>calculator.PowOfX(1/2));
 document.getElementById("powOfOneBy3")?.addEventListener("click",()=>calculator.PowOfX(1/3));
-document.getElementById("Open-Bracket")?.addEventListener("click",calculator.OpenBracketFunction);
-document.getElementById("Close-Bracket")?.addEventListener("click",calculator.CloseBracketFunction);
-document.getElementById("Factorial")?.addEventListener("click",calculator.DoFactorial);
+document.getElementById("Open-Bracket")?.addEventListener("click",()=>calculator.OpenBracketFunction());
+document.getElementById("Close-Bracket")?.addEventListener("click",()=>calculator.CloseBracketFunction());
+document.getElementById("Factorial")?.addEventListener("click",()=>calculator.DoFactorial());
 document.getElementById("Devide")?.addEventListener("click",()=>calculator.BasicFunctions("/"));
 
 // forth line
@@ -698,7 +728,7 @@ document.getElementById("addition")?.addEventListener("click",()=>calculator.Bas
 // seven line
 document.getElementById("logNatural")?.addEventListener("click",()=>calculator.DoLog('Natural'));
 document.getElementById("resToE")?.addEventListener("click",()=>calculator.ResToX(Math.E));
-document.getElementById("negate")?.addEventListener("click",calculator.NegateFunction);
+document.getElementById("negate")?.addEventListener("click",()=>calculator.NegateFunction());
 document.getElementById("zero")?.addEventListener("click",()=>calculator.AddNumber('0'));
-document.getElementById("putPoint")?.addEventListener("click",calculator.PutPoint);
-document.getElementById("Equal")?.addEventListener("click",calculator.EqualOperator);
+document.getElementById("putPoint")?.addEventListener("click",()=>calculator.PutPoint());
+document.getElementById("Equal")?.addEventListener("click",()=>calculator.EqualOperator());
