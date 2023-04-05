@@ -141,7 +141,7 @@ export class Calculator {
     OpenBracketFunction() {
         const x = this.GetSecoundaryScreenValue(), y = this.GetPrimaryScreenValue();
         if (x != "" && y != "0" && x[x.length - 1] != "=") {
-            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + "*(");
+            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "*" + this.GetPrimaryScreenValue() + "*(");
             this.SetPrimaryScreenValue("0");
         }
         else if (x == "" && y != "0") {
@@ -227,11 +227,11 @@ export class Calculator {
     }
     // any ** x function
     ResToX(num) {
-        this.SetPrimaryScreenValue((Math.pow(num, Number(this.GetPrimaryScreenValue()))).toString());
+        this.SetPrimaryScreenValue((num ** Number(this.GetPrimaryScreenValue())).toString());
     }
     //Pow of x 
     PowOfX(num) {
-        this.SetPrimaryScreenValue((Math.pow(Number(this.GetPrimaryScreenValue()), (num))).toString());
+        this.SetPrimaryScreenValue((Number(this.GetPrimaryScreenValue()) ** (num)).toString());
     }
     // 1/x function
     OneUponX() {

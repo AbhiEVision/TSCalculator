@@ -149,7 +149,7 @@ export class Calculator {
     OpenBracketFunction() {
         const x:string = this.GetSecoundaryScreenValue(), y =this.GetPrimaryScreenValue();
         if(x != "" && y != "0" && x[x.length-1] != "="){
-            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + this.GetPrimaryScreenValue() + "*(");
+            this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "*" + this.GetPrimaryScreenValue() + "*(");
             this.SetPrimaryScreenValue("0");
         } else if( x == "" && y!= "0"){
             this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "*(");
@@ -157,7 +157,7 @@ export class Calculator {
         } else if( x != "" && y!= "0" && x[x.length-1] == "=") {
             this.SetSecoundaryScreenValue(this.GetPrimaryScreenValue() + "*(");
             this.SetPrimaryScreenValue("0");
-        } else {
+        }else {
             this.SetSecoundaryScreenValue(this.GetSecoundaryScreenValue() + "(")
         }
         this.IncrementBracketCounter();
