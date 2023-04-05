@@ -299,10 +299,10 @@ window.onkeydown = (e) => {
         case "Backspace":
             calculator.RemoveFromBack();
             break;
-        case "E":
+        case "e":
             calculator.WriteEValue();
             break;
-        case "P":
+        case "p":
             calculator.WritePIValue();
             break;
         case "s":

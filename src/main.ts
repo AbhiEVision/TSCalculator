@@ -143,8 +143,8 @@ window.onkeydown = (e :KeyboardEvent) => {
         case ")": calculator.CloseBracketFunction(); break;
 
         case "Backspace": calculator.RemoveFromBack(); break;
-        case "E": calculator.WriteEValue(); break;
-        case "P": calculator.WritePIValue(); break;
+        case "e": calculator.WriteEValue(); break;
+        case "p": calculator.WritePIValue(); break;
         case "s": calculator.DoTrignoCalculation("sin"); break;
         case "c": calculator.DoTrignoCalculation("cos"); break;
         case "t": calculator.DoTrignoCalculation("tan"); break;
